@@ -1,0 +1,14 @@
+# main マージ後：承認（prod は Cloud Build の承認必須トリガー）を経て Deploy
+steps:
+  - id: apply
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args: ["scripts/im.sh", "apply", "${_ENV}", "${_STAGE}"]
+    env:
+      - IAC_PROJECT=${_IAC_PROJECT}
+      - EVIDENCE_BUCKET=${_EVIDENCE_BUCKET}
+      - BUILD_ID=$BUILD_ID
+      - COMMIT_SHA=$COMMIT_SHA
+      - CHANGE_ID=${_CHANGE_ID}
+options:
+  logging: CLOUD_LOGGING_ONLY

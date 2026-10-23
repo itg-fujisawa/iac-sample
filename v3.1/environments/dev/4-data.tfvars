@@ -1,0 +1,19 @@
+project_id  = "REPLACE_DEV_PROJECT"
+environment = "dev"
+network     = "projects/REPLACE_DEV_PROJECT/global/networks/jpp-dev-vpc"
+service_accounts = {                          # 2-environments output
+  app-runtime = "app-runtime@REPLACE_DEV_PROJECT.iam.gserviceaccount.com"
+  batch-job   = "batch-job@REPLACE_DEV_PROJECT.iam.gserviceaccount.com"
+  mig-batch   = "mig-batch@REPLACE_DEV_PROJECT.iam.gserviceaccount.com"
+  indexer     = "indexer@REPLACE_DEV_PROJECT.iam.gserviceaccount.com"
+  backup-ops  = "backup-ops@REPLACE_DEV_PROJECT.iam.gserviceaccount.com"
+}
+sql_ha                   = false
+spanner_enabled          = true
+spanner_processing_units = 100
+redis_memory_gb          = 1
+filestore_tier           = "BASIC_HDD"
+filestore_capacity_gb    = 1024
+dr_mode                  = "cold"
+backup_bucket            = "REPLACE_COMMON_BACKUP_PROJECT-dev"   # 1-org output backup_buckets["dev"]
+deletion_protection      = false

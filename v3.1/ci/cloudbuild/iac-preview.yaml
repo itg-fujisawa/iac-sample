@@ -1,0 +1,18 @@
+# PR 時：Infrastructure Manager Preview を作成し、結果を証跡バケットへ保存
+# 置換変数：_ENV（dev|stg|prod）、_STAGE（2-environments 等）、_IAC_PROJECT、_EVIDENCE_BUCKET
+steps:
+  - id: static-check
+    name: python:3.12-slim
+    entrypoint: python
+    args: ["scripts/static_check.py"]
+  - id: preview
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args: ["scripts/im.sh", "preview", "${_ENV}", "${_STAGE}"]
+    env:
+      - IAC_PROJECT=${_IAC_PROJECT}
+      - EVIDENCE_BUCKET=${_EVIDENCE_BUCKET}
+      - BUILD_ID=$BUILD_ID
+      - COMMIT_SHA=$COMMIT_SHA
+options:
+  logging: CLOUD_LOGGING_ONLY

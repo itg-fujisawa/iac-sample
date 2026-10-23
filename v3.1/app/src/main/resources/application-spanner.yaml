@@ -1,0 +1,7 @@
+# Spanner を readiness に含める（SPANNER_DATABASE 設定時に Terraform が profile を付与）
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: readinessState,db,spanner

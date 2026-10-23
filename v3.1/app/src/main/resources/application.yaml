@@ -1,0 +1,60 @@
+# 共通（Cloud Run 前提）。ローカル実行は profile "local"
+spring:
+  application:
+    name: jpp-app
+  main:
+    banner-mode: off
+  lifecycle:
+    timeout-per-shutdown-phase: 8s          # Cloud Run は SIGTERM 後 10 秒で停止
+  # Cloud SQL：Private IP ＋ IAM 認証（Cloud SQL Java Connector）
+  datasource:
+    url: jdbc:postgresql:///${DB_NAME:patent}
+    username: ${DB_USER:}                    # 実行SA（.gserviceaccount.com を除いた形）
+    password: iam-auth-dummy                 # IAM 認証では未使用（空不可のためダミー）
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:5}    # インスタンス数×プール ≦ Cloud SQL 最大接続数 で設計
+      minimum-idle: 1
+      connection-timeout: 10000
+      initialization-fail-timeout: -1        # DB 障害時も起動し、readiness で DOWN を返す
+      data-source-properties:
+        socketFactory: com.google.cloud.sql.postgres.SocketFactory
+        cloudSqlInstance: ${DB_INSTANCE:}
+        enableIamAuth: true
+        ipTypes: PRIVATE
+        sslmode: disable                     # 暗号化は Connector が実施
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  forward-headers-strategy: framework
+  compression:
+    enabled: true
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+          additional-path: "server:/healthz"   # Cloud Run の startup / liveness probe
+        readiness:
+          include: readinessState,db
+          additional-path: "server:/readyz"    # DB を含む業務可否（外形監視・切替判定用）
+
+app:
+  env: ${APP_ENV:local}
+  service: ${APP_SERVICE:local}
+  version: ${APP_VERSION:dev}
+  project-id: ${GOOGLE_CLOUD_PROJECT:}
+  spanner:
+    database: ${SPANNER_DATABASE:}

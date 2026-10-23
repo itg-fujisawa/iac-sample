@@ -1,0 +1,5 @@
+# Cloud Run 上：Cloud Logging 形式の構造化ログ
+logging:
+  structured:
+    format:
+      console: jp.pavlov.jpp.logging.CloudLoggingFormatter

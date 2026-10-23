@@ -1,0 +1,56 @@
+# stg → prod 昇格：stg で試験済みの「同一 digest」を prod の Registry へコピーし、prod の鍵で署名して配備（再ビルドしない）
+# prod Project で実行。承認が必要なトリガーから起動すること。
+# 前提：stg の ci.tfvars の promote_readers に prod の app-builder を登録（stg Registry の読取り）
+# _SOURCE_IMAGE：stg の digest（例 asia-northeast1-docker.pkg.dev/STG/jpp-stg-app/app@sha256:...）
+substitutions:
+  _ENV: prod
+  _REGION: asia-northeast1
+  _SOURCE_IMAGE: ""
+  _TAG: ""
+  _SERVICES: "common-api tokujitsu isho shohyo shimpan static"
+  _JOBS: "daily-load"
+steps:
+  - id: copy
+    name: gcr.io/go-containerregistry/gcrane:debug
+    entrypoint: sh
+    args:
+      - -c
+      - |
+        set -eu
+        [ -n "${_SOURCE_IMAGE}" ] && [ -n "${_TAG}" ] || { echo "_SOURCE_IMAGE and _TAG are required"; exit 2; }
+        echo "${_SOURCE_IMAGE}" | grep -q '@sha256:' || { echo "_SOURCE_IMAGE must be a digest"; exit 2; }
+        DST=${_REGION}-docker.pkg.dev/$PROJECT_ID/jpp-${_ENV}-app/app:${_TAG}
+        gcrane copy "${_SOURCE_IMAGE}" "$DST"   # Google の認証情報（実行SA）を自動使用
+        SRC_DIGEST=${_SOURCE_IMAGE#*@}
+        DST_DIGEST=$(gcrane digest "$DST")
+        [ "$SRC_DIGEST" = "$DST_DIGEST" ] || { echo "digest mismatch"; exit 1; }
+        echo "${_REGION}-docker.pkg.dev/$PROJECT_ID/jpp-${_ENV}-app/app@$DST_DIGEST" > /workspace/image
+  - id: attest
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        KEY=$(gcloud kms keys versions list --key=build-attestor --keyring=jpp-${_ENV}-attest \
+          --location=${_REGION} --filter='state=ENABLED' --sort-by=~name --limit=1 --format='value(name)')
+        gcloud container binauthz attestations sign-and-create \
+          --artifact-url="$(cat /workspace/image)" \
+          --attestor="projects/$PROJECT_ID/attestors/jpp-${_ENV}-build" --keyversion="$KEY"
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        IMG=$(cat /workspace/image)
+        for s in ${_SERVICES}; do
+          gcloud run services update "jpp-${_ENV}-$s" --image="$IMG" --region=${_REGION} --quiet
+        done
+        for j in ${_JOBS}; do
+          gcloud run jobs update "jpp-${_ENV}-$j" --image="$IMG" --region=${_REGION} --quiet
+        done
+serviceAccount: projects/$PROJECT_ID/serviceAccounts/app-builder@$PROJECT_ID.iam.gserviceaccount.com
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,127 @@
+# アプリ CD（app/ の Spring Boot）
+#   ビルド → 単体テスト（Dockerfile 内 mvn package）→ push → 脆弱性ゲート → 署名 → Cloud Run サービス/Jobs 更新
+# Terraform は image を ignore_changes にしているため、イメージ更新はこのパイプラインだけが行う。
+#
+# トリガー例：main へのマージで _ENV=dev、stg は「承認が必要」トリガーで _ENV=stg
+# 手動・初回：scripts/app_build.sh <env>（_DEPLOY=false で digest のみ取得）
+substitutions:
+  _ENV: dev
+  _REGION: asia-northeast1
+  _TAG: manual
+  _SERVICES: "common-api tokujitsu isho shohyo shimpan static"
+  _JOBS: "daily-load"
+  _DEPLOY: "true"
+  _MAX_CRITICAL: "0"
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    dir: app
+    args:
+      - build
+      - --build-arg=APP_VERSION=${_TAG}
+      - --label=org.opencontainers.image.revision=$COMMIT_SHA
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/jpp-${_ENV}-app/app:${_TAG}
+      - .
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args: ["push", "${_REGION}-docker.pkg.dev/$PROJECT_ID/jpp-${_ENV}-app/app:${_TAG}"]
+
+  - id: digest
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        gcloud artifacts docker images describe \
+          ${_REGION}-docker.pkg.dev/$PROJECT_ID/jpp-${_ENV}-app/app:${_TAG} \
+          --format='value(image_summary.fully_qualified_digest)' > /workspace/image
+        echo "IMAGE=$(cat /workspace/image)"
+
+  # Artifact Analysis の自動スキャン完了を待ち、CRITICAL 件数で判定
+  - id: scan-gate
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        IMG=$(cat /workspace/image)
+        for i in $(seq 1 30); do
+          gcloud artifacts docker images describe "$IMG" --show-package-vulnerability --format=json > /workspace/vuln.json || true
+          if python3 -c "import json,sys; d=json.load(open('/workspace/vuln.json')); sys.exit(0 if 'package_vulnerability_summary' in d else 1)"; then break; fi
+          echo "waiting for vulnerability scan... ($i)"; sleep 20
+        done
+        python3 - <<'PY'
+        import json, os, sys
+        d = json.load(open('/workspace/vuln.json'))
+        s = d.get('package_vulnerability_summary')
+        if s is None:
+            print('scan result not available'); sys.exit(1)
+        crit = len(s.get('vulnerabilities', {}).get('CRITICAL', []))
+        limit = int(os.environ.get('MAX_CRITICAL', '0'))
+        print(f'CRITICAL={crit} (limit {limit})')
+        sys.exit(1 if crit > limit else 0)
+        PY
+    env:
+      - MAX_CRITICAL=${_MAX_CRITICAL}
+
+  # Binary Authorization の署名（attestation）。stg/prod は署名がないと起動不可
+  - id: attest
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        KEY=$(gcloud kms keys versions list --key=build-attestor --keyring=jpp-${_ENV}-attest \
+          --location=${_REGION} --filter='state=ENABLED' --sort-by=~name --limit=1 --format='value(name)')
+        gcloud container binauthz attestations sign-and-create \
+          --artifact-url="$(cat /workspace/image)" \
+          --attestor="projects/$PROJECT_ID/attestors/jpp-${_ENV}-build" \
+          --keyversion="$KEY"
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        IMG=$(cat /workspace/image)
+        if [ "${_DEPLOY}" != "true" ]; then echo "skip deploy: $IMG"; exit 0; fi
+        for s in ${_SERVICES}; do
+          echo "== service jpp-${_ENV}-$s"
+          gcloud run services update "jpp-${_ENV}-$s" --image="$IMG" --region=${_REGION} --quiet
+        done
+        for j in ${_JOBS}; do
+          echo "== job jpp-${_ENV}-$j"
+          gcloud run jobs update "jpp-${_ENV}-$j" --image="$IMG" --region=${_REGION} --quiet
+        done
+
+  - id: smoke
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        if [ "${_DEPLOY}" != "true" ]; then exit 0; fi
+        for s in ${_SERVICES}; do
+          REV=$(gcloud run services describe "jpp-${_ENV}-$s" --region=${_REGION} --format='value(status.latestReadyRevisionName)')
+          CREATED=$(gcloud run services describe "jpp-${_ENV}-$s" --region=${_REGION} --format='value(status.latestCreatedRevisionName)')
+          [ "$REV" = "$CREATED" ] || { echo "revision not ready: $s ($CREATED)"; exit 1; }
+        done
+        echo "all services ready"
+
+artifacts:
+  objects:
+    location: gs://$PROJECT_ID-build-src/evidence/${_ENV}/
+    paths: ["/workspace/image", "/workspace/vuln.json"]
+serviceAccount: projects/$PROJECT_ID/serviceAccounts/app-builder@$PROJECT_ID.iam.gserviceaccount.com
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+timeout: 3600s

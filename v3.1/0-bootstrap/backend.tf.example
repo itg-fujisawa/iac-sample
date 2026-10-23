@@ -1,0 +1,6 @@
+terraform {
+  backend "gcs" {
+    bucket = "REPLACE_TFSTATE_BUCKET" # output: bootstrap_state_bucket
+    prefix = "0-bootstrap"
+  }
+}

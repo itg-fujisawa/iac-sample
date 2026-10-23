@@ -1,0 +1,651 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1520" viewBox="0 0 2200 1520" font-family="Noto Sans CJK JP, Meiryo, Yu Gothic, sans-serif"><defs><marker id="m1e88e5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e88e5"/></marker><marker id="me65100" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e65100"/></marker><marker id="m8e24aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8e24aa"/></marker><marker id="m5f6368" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5f6368"/></marker><marker id="m00897b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#00897b"/></marker><marker id="m202124" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#202124"/></marker><marker id="mc2185b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2185b"/></marker></defs><rect width="2200" height="1520" fill="#ffffff"/>
+<text x="30" y="42" font-size="22" font-weight="bold" fill="#202124" text-anchor="start">次期J-PlatPat Google Cloud 構成図（IaC v3.1 準拠：Infrastructure Manager 0-bootstrap〜6-observability・ci・app）</text>
+<text x="30" y="66" font-size="12.5" font-weight="normal" fill="#5f6368" text-anchor="start">本番（fld-prod）を詳細表示。dev / stg は同一構成（差分は右下の凡例を参照）。番号バッジ＝構築する IaC Stage</text>
+<rect x="410" y="84" width="300" height="56" rx="28" fill="#f8f9fa" stroke="#202124" stroke-width="1.5"/>
+<text x="560" y="108" font-size="13" font-weight="bold" fill="#202124" text-anchor="middle">利用者（インターネット）</text>
+<text x="560" y="126" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">月1.5億アクセス想定・HTTPS</text>
+<rect x="20" y="155" width="1880" height="990" rx="10" fill="#fbf7fc" stroke="#8e24aa" stroke-width="2"/>
+<text x="32" y="177" font-size="15" font-weight="bold" fill="#6a1b9a" text-anchor="start">Google Cloud 組織（1-org）</text>
+<rect x="36" y="190" width="316" height="945" rx="10" fill="#f1f3f4" stroke="#9aa0a6" stroke-width="1.5"/>
+<text x="48" y="212" font-size="13" font-weight="bold" fill="#202124" text-anchor="start">fld-common（東京 asia-northeast1）</text>
+<rect x="48" y="222" width="292" height="300" rx="10" fill="#fff" stroke="#5f6368" stroke-width="1.5"/>
+<text x="60" y="244" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">prj-common-iac</text>
+<rect x="58" y="254" width="272" height="52" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="58" y="254" width="5" height="52" rx="2" fill="#5f6368"/>
+<text x="70" y="272" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Infrastructure Manager</text>
+<text x="70" y="288.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Deployment：jpp-{env}-{stage}</text>
+<rect x="303" y="258" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="314" y="271" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<rect x="58" y="314" width="272" height="52" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="58" y="314" width="5" height="52" rx="2" fill="#5f6368"/>
+<text x="70" y="332" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">GCS：State／証跡</text>
+<text x="70" y="348.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">世代管理・公開防止・Preview 保存</text>
+<rect x="303" y="318" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="314" y="331" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<rect x="58" y="374" width="272" height="66" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="58" y="374" width="5" height="66" rx="2" fill="#5f6368"/>
+<text x="70" y="392" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">実行SA（環境別に分離）</text>
+<text x="70" y="408.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">im-org / im-dev / im-stg / im-prod</text>
+<text x="70" y="422.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">SA 鍵は発行しない</text>
+<rect x="303" y="378" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="314" y="391" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<rect x="58" y="448" width="272" height="62" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="58" y="448" width="5" height="62" rx="2" fill="#5f6368"/>
+<text x="70" y="466" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">im-ci（Cloud Build 呼出し）</text>
+<text x="70" y="482.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">config.admin・executor の actAs</text>
+<text x="70" y="496.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">prod は承認付き CI からのみ</text>
+<rect x="303" y="452" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="314" y="465" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<rect x="48" y="534" width="292" height="250" rx="10" fill="#fff" stroke="#5f6368" stroke-width="1.5"/>
+<text x="60" y="556" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">prj-common-audit</text>
+<rect x="58" y="566" width="272" height="66" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="58" y="566" width="5" height="66" rx="2" fill="#8e24aa"/>
+<text x="70" y="584" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Logging バケット</text>
+<text x="70" y="600.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">保持 400日（12か月以上）</text>
+<text x="70" y="614.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">locked＝解除不可（stg 確認後）</text>
+<rect x="303" y="570" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="314" y="583" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="58" y="640" width="272" height="52" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="58" y="640" width="5" height="52" rx="2" fill="#8e24aa"/>
+<text x="70" y="658" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">BigQuery リンク データセット</text>
+<text x="70" y="674.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Log Analytics で横断検索</text>
+<rect x="303" y="644" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="314" y="657" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="58" y="700" width="272" height="72" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="58" y="700" width="5" height="72" rx="2" fill="#8e24aa"/>
+<text x="70" y="718" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">組織ログシンク（全 Project）</text>
+<text x="70" y="734.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">監査ログ・LB・Cloud Run・Armor</text>
+<text x="70" y="748.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">include_children</text>
+<rect x="303" y="704" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="314" y="717" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="48" y="796" width="292" height="327" rx="10" fill="#fff" stroke="#5f6368" stroke-width="1.5"/>
+<text x="60" y="818" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">組織ポリシー（ベースライン）</text>
+<text x="64" y="844" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・デフォルト VPC 作成禁止</text>
+<text x="64" y="864" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・SA 鍵作成禁止</text>
+<text x="64" y="884" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・VM 外部 IP 禁止・OS Login 必須</text>
+<text x="64" y="904" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・Cloud SQL 公開 IP 禁止</text>
+<text x="64" y="924" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・バケット均一アクセス・公開防止</text>
+<text x="64" y="944" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・リソース所在：国内（東京・大阪）</text>
+<text x="64" y="964" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・ドメイン制限共有（Sorry のみ例外）</text>
+<text x="64" y="984" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">・シリアルポート禁止 ほか</text>
+<rect x="311" y="799" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="322" y="812" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<text x="60" y="1112" font-size="10.5" font-weight="normal" fill="#6a1b9a" text-anchor="start">フォルダ：fld-dev / fld-stg / fld-prod（fld-mig なし）</text>
+<rect x="380" y="198" width="1180" height="935" rx="12" fill="#eef0fb" stroke="#c5cae9" stroke-width="1.5"/>
+<rect x="372" y="190" width="1180" height="935" rx="12" fill="#f5f7fb" stroke="#b0bec5" stroke-width="1.5"/>
+<rect x="364" y="182" width="1180" height="953" rx="10" fill="#ffffff" stroke="#3949ab" stroke-width="2"/>
+<text x="620" y="204" font-size="14" font-weight="bold" fill="#283593" text-anchor="start">fld-prod ＞ prj-prod-patent（東京 asia-northeast1）　※ fld-dev / fld-stg も同構成</text>
+<rect x="1509" y="187" width="22" height="18" rx="9" fill="#3949ab"/>
+<text x="1520" y="200" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<rect x="376" y="212" width="1156" height="128" rx="10" fill="#f3f8fe" stroke="#90caf9" stroke-width="1.5"/>
+<text x="388" y="234" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">入口（5-app-infra）</text>
+<rect x="388" y="240" width="214" height="88" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="388" y="240" width="5" height="88" rx="2" fill="#1e88e5"/>
+<text x="400" y="258" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">外部 Application LB</text>
+<text x="400" y="274.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">グローバル IP・EXTERNAL_MANAGED</text>
+<text x="400" y="288.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">TLS1.2（MODERN）</text>
+<text x="400" y="303.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">HTTP→HTTPS リダイレクト</text>
+<rect x="575" y="244" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="586" y="257" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="616" y="240" width="250" height="88" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="616" y="240" width="5" height="88" rx="2" fill="#1e88e5"/>
+<text x="628" y="258" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Armor（backend）</text>
+<text x="628" y="274.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">OWASP 事前構成ルール 9種</text>
+<text x="628" y="288.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">パス throttle・IP rate-based ban</text>
+<text x="628" y="303.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Adaptive Protection・reCAPTCHA</text>
+<rect x="839" y="244" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="850" y="257" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="880" y="240" width="196" height="88" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="880" y="240" width="5" height="88" rx="2" fill="#1e88e5"/>
+<text x="892" y="258" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud CDN</text>
+<text x="892" y="274.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Armor Edge（IP 制御）</text>
+<text x="892" y="288.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/static のみキャッシュ</text>
+<text x="892" y="303.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/api は no-store</text>
+<rect x="1049" y="244" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1060" y="257" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="1090" y="240" width="232" height="88" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1090" y="240" width="5" height="88" rx="2" fill="#1e88e5"/>
+<text x="1102" y="258" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">URL map</text>
+<text x="1102" y="274.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/api /p /d /t /s /static</text>
+<text x="1102" y="288.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">X-Robots-Tag 付与</text>
+<text x="1102" y="303.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">maintenance_mode→Sorry</text>
+<rect x="1295" y="244" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1306" y="257" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="1336" y="240" width="184" height="88" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1336" y="240" width="5" height="88" rx="2" fill="#1e88e5"/>
+<text x="1348" y="258" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">マネージド証明書</text>
+<text x="1348" y="274.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Google 管理・自動更新</text>
+<text x="1348" y="288.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">DNS は既存ゾーン管理</text>
+<rect x="1493" y="244" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1504" y="257" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<polyline points="560,140 560,238" fill="none" stroke="#202124" stroke-width="1.6" marker-end="url(#m202124)"/>
+<text x="590" y="165" font-size="10.5" fill="#202124" text-anchor="middle">HTTPS</text>
+<polyline points="602,284 614,284" fill="none" stroke="#1e88e5" stroke-width="1.6" marker-end="url(#m1e88e5)"/>
+<polyline points="866,284 878,284" fill="none" stroke="#1e88e5" stroke-width="1.6" marker-end="url(#m1e88e5)"/>
+<polyline points="1076,284 1088,284" fill="none" stroke="#1e88e5" stroke-width="1.6" marker-end="url(#m1e88e5)"/>
+<rect x="376" y="352" width="1156" height="212" rx="10" fill="#f3f8fe" stroke="#90caf9" stroke-width="1.5"/>
+<text x="388" y="374" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">アプリケーション（5-app-infra：Cloud Run の枠 ／ app：Spring Boot 本体）</text>
+<rect x="388" y="384" width="148" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="388" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="400" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">common-api</text>
+<text x="400" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/api/*</text>
+<text x="400" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">min≥1（prod）</text>
+<rect x="509" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="520" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="546" y="384" width="148" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="546" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="558" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">tokujitsu</text>
+<text x="558" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/p/* 特実</text>
+<text x="558" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">min≥1（prod）</text>
+<rect x="667" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="678" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="704" y="384" width="148" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="704" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="716" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">isho</text>
+<text x="716" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/d/* 意匠</text>
+<text x="716" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">min≥1（prod）</text>
+<rect x="825" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="836" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="862" y="384" width="148" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="862" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="874" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">shohyo</text>
+<text x="874" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/t/* 商標</text>
+<text x="874" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">min≥1（prod）</text>
+<rect x="983" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="994" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="1020" y="384" width="148" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1020" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="1032" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">shimpan</text>
+<text x="1032" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/s/* 審判</text>
+<text x="1032" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">min≥1（prod）</text>
+<rect x="1141" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1152" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="1178" y="384" width="148" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1178" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="1190" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">static</text>
+<text x="1190" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/static/* CDN</text>
+<text x="1190" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">min≥1（prod）</text>
+<rect x="1299" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1310" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<polyline points="1206,328 1206,382" fill="none" stroke="#1e88e5" stroke-width="1.6" marker-end="url(#m1e88e5)"/>
+<text x="1214" y="376" font-size="10.5" font-weight="normal" fill="#1e88e5" text-anchor="start">Serverless NEG ×6（全サービスへ振分け）</text>
+<rect x="1340" y="384" width="180" height="62" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1340" y="384" width="5" height="62" rx="2" fill="#1e88e5"/>
+<text x="1352" y="402" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Run Jobs</text>
+<text x="1352" y="418.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">daily-load（定時処理）</text>
+<text x="1352" y="432.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">batch-job SA</text>
+<rect x="1493" y="388" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1504" y="401" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="388" y="456" width="640" height="96" rx="6" fill="#fff" stroke="#6d4c41" stroke-width="1.4"/>
+<rect x="388" y="456" width="5" height="96" rx="2" fill="#6d4c41"/>
+<text x="400" y="474" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">アプリ本体：Spring Boot 3.5 / Java 21（app/）</text>
+<text x="400" y="490.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">同一イメージを全サービス・Jobs へ配備（APP_SERVICE / APP_JOB_NAME で役割切替）</text>
+<text x="400" y="504.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">/healthz（startup・liveness）・/readyz（DB・Spanner）・graceful shutdown</text>
+<text x="400" y="519.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Cloud SQL Java Connector＋IAM DB 認証／Spanner 全文検索 API（障害時 503）</text>
+<text x="400" y="533.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Cloud Logging 構造化ログ＋トレース相関</text>
+<rect x="998" y="460" width="28" height="18" rx="9" fill="#6d4c41"/>
+<text x="1012" y="473" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">app</text>
+<rect x="1040" y="456" width="230" height="96" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="1040" y="456" width="5" height="96" rx="2" fill="#c2185b"/>
+<text x="1052" y="474" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Binary Authorization 強制</text>
+<text x="1052" y="490.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">署名なしイメージは起動不可</text>
+<text x="1052" y="504.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">prod/stg：ENFORCED</text>
+<text x="1052" y="519.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">dev：監査のみ（DRYRUN）</text>
+<rect x="1240" y="460" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="1254" y="473" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<rect x="1282" y="456" width="238" height="96" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4" stroke-dasharray="5 4"/>
+<rect x="1282" y="456" width="5" height="96" rx="2" fill="#1e88e5"/>
+<text x="1294" y="474" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Model Armor【要検証】</text>
+<text x="1294" y="490.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">生成AI 入出力の保護</text>
+<text x="1294" y="504.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Gemini Enterprise Agent</text>
+<text x="1294" y="519.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Platform は API 有効化のみ</text>
+<rect x="1493" y="460" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1504" y="473" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<rect x="376" y="576" width="1156" height="234" rx="10" fill="#f0faf8" stroke="#4db6ac" stroke-width="1.5"/>
+<text x="388" y="598" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">VPC jpp-prod-vpc（3-network）　FW ポリシー：外向き既定拒否＋外部接続調整表の許可のみ／VPC フローログ</text>
+<rect x="388" y="606" width="250" height="120" rx="6" fill="#ffffff" stroke="#00897b" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="398" y="624" font-size="11.5" font-weight="bold" fill="#00695c" text-anchor="start">app サブネット 10.30.0.0/22</text>
+<text x="398" y="639" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Cloud Run Direct VPC egress</text>
+<text x="400" y="662" font-size="10.5" font-weight="normal" fill="#3c4043" text-anchor="start">・PRIVATE_RANGES_ONLY</text>
+<text x="400" y="678" font-size="10.5" font-weight="normal" fill="#3c4043" text-anchor="start">・Private Google Access</text>
+<rect x="650" y="606" width="220" height="120" rx="6" fill="#ffffff" stroke="#00897b" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="660" y="624" font-size="11.5" font-weight="bold" fill="#00695c" text-anchor="start">batch 10.30.4.0/23</text>
+<text x="660" y="639" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Cloud Run Jobs・Dataflow</text>
+<rect x="882" y="606" width="236" height="120" rx="6" fill="#ffffff" stroke="#00897b" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="892" y="624" font-size="11.5" font-weight="bold" fill="#00695c" text-anchor="start">ops 10.30.6.0/24</text>
+<text x="892" y="639" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">運用管理</text>
+<rect x="892" y="648" width="216" height="70" rx="6" fill="#fff" stroke="#43a047" stroke-width="1.4"/>
+<rect x="892" y="648" width="5" height="70" rx="2" fill="#43a047"/>
+<text x="904" y="666" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">運用管理 VM（MIG）</text>
+<text x="904" y="682.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">複数ゾーン・自動修復</text>
+<text x="904" y="696.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">外部 IP なし・Shielded VM</text>
+<rect x="1081" y="652" width="22" height="18" rx="9" fill="#43a047"/>
+<text x="1092" y="665" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">6</text>
+<rect x="1130" y="606" width="180" height="120" rx="6" fill="#ffffff" stroke="#00897b" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="1140" y="624" font-size="11.5" font-weight="bold" fill="#00695c" text-anchor="start">migration 10.30.7.0/24</text>
+<text x="1140" y="639" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">データ移行</text>
+<rect x="1140" y="648" width="160" height="70" rx="6" fill="#fff" stroke="#3949ab" stroke-width="1.4"/>
+<rect x="1140" y="648" width="5" height="70" rx="2" fill="#3949ab"/>
+<text x="1152" y="666" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Batch</text>
+<text x="1152" y="682.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">mig-batch SA</text>
+<text x="1152" y="696.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">移行リハーサル</text>
+<rect x="1273" y="652" width="22" height="18" rx="9" fill="#3949ab"/>
+<text x="1284" y="665" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<rect x="1322" y="600" width="198" height="56" rx="6" fill="#fff" stroke="#00897b" stroke-width="1.4"/>
+<rect x="1322" y="600" width="5" height="56" rx="2" fill="#00897b"/>
+<text x="1334" y="618" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud NAT</text>
+<text x="1334" y="634.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">固定送信元（必要時）</text>
+<rect x="1493" y="604" width="22" height="18" rx="9" fill="#00897b"/>
+<text x="1504" y="617" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+<rect x="1322" y="664" width="198" height="72" rx="6" fill="#fff" stroke="#00897b" stroke-width="1.4"/>
+<rect x="1322" y="664" width="5" height="72" rx="2" fill="#00897b"/>
+<text x="1334" y="682" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Router＋</text>
+<text x="1334" y="698.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Partner Interconnect ×2</text>
+<text x="1334" y="712.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">ASN 16550（dev は不可）</text>
+<rect x="1493" y="668" width="22" height="18" rx="9" fill="#00897b"/>
+<text x="1504" y="681" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+<rect x="388" y="738" width="922" height="62" rx="6" fill="#e0f2f1" stroke="#00897b" stroke-width="1.5"/>
+<text x="400" y="760" font-size="12" font-weight="bold" fill="#00695c" text-anchor="start">Private Service Access（PSA）10.30.128.0/17</text>
+<text x="400" y="778" font-size="10.5" font-weight="normal" fill="#3c4043" text-anchor="start">Cloud SQL・Memorystore・Filestore を Private IP で接続（公開 IP なし）</text>
+<rect x="1279" y="741" width="22" height="18" rx="9" fill="#00897b"/>
+<text x="1290" y="754" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+<polyline points="600,552 600,604" fill="none" stroke="#00897b" stroke-width="1.6" marker-end="url(#m00897b)"/>
+<rect x="376" y="822" width="1156" height="140" rx="10" fill="#fff8f0" stroke="#ffb74d" stroke-width="1.5"/>
+<text x="388" y="844" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">データ層（4-data）</text>
+<rect x="388" y="850" width="200" height="102" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="388" y="850" width="5" height="102" rx="2" fill="#e65100"/>
+<text x="400" y="868" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud SQL PostgreSQL 16</text>
+<text x="400" y="884.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">原本・マスタ</text>
+<text x="400" y="898.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">REGIONAL HA（stg/prod 必須）</text>
+<text x="400" y="913.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">PITR 7日・IAM 認証</text>
+<text x="400" y="927.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">バックアップ保管先：大阪</text>
+<rect x="561" y="854" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="572" y="867" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="600" y="850" width="206" height="102" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="600" y="850" width="5" height="102" rx="2" fill="#e65100"/>
+<text x="612" y="868" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Spanner</text>
+<text x="612" y="884.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">検索・一覧用（stg/prod 必須）</text>
+<text x="612" y="898.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">regional 東京・Enterprise</text>
+<text x="612" y="913.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">全文検索 SEARCH INDEX</text>
+<text x="612" y="927.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">日次 backup・7日 PITR</text>
+<rect x="779" y="854" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="790" y="867" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="818" y="850" width="168" height="102" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="818" y="850" width="5" height="102" rx="2" fill="#e65100"/>
+<text x="830" y="868" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Memorystore</text>
+<text x="830" y="884.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Redis 7.2</text>
+<text x="830" y="898.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">STANDARD_HA</text>
+<text x="830" y="913.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">AUTH・TLS</text>
+<text x="830" y="927.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">正本ではない</text>
+<rect x="959" y="854" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="970" y="867" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="998" y="850" width="154" height="102" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="998" y="850" width="5" height="102" rx="2" fill="#e65100"/>
+<text x="1010" y="868" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Filestore</text>
+<text x="1010" y="884.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">REGIONAL</text>
+<text x="1010" y="898.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">（A-24 ティア）</text>
+<text x="1010" y="913.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">削除保護</text>
+<rect x="1125" y="854" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="1136" y="867" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="1164" y="850" width="176" height="102" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="1164" y="850" width="5" height="102" rx="2" fill="#e65100"/>
+<text x="1176" y="868" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Storage 原本</text>
+<text x="1176" y="884.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">公報 PDF/XML</text>
+<text x="1176" y="898.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">世代管理・公開防止</text>
+<text x="1176" y="913.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">ソフト削除 7日</text>
+<rect x="1313" y="854" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="1324" y="867" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="1352" y="850" width="168" height="102" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="1352" y="850" width="5" height="102" rx="2" fill="#e65100"/>
+<text x="1364" y="868" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Secret Manager</text>
+<text x="1364" y="884.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">app-config</text>
+<text x="1364" y="898.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">東京＋大阪 複製</text>
+<text x="1364" y="913.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">数値 version 固定</text>
+<rect x="1493" y="854" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="1504" y="867" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<polyline points="540,800 540,848" fill="none" stroke="#00897b" stroke-width="1.6" marker-end="url(#m00897b)"/>
+<polyline points="902,800 902,848" fill="none" stroke="#00897b" stroke-width="1.6" marker-end="url(#m00897b)"/>
+<polyline points="1075,800 1075,848" fill="none" stroke="#00897b" stroke-width="1.6" marker-end="url(#m00897b)"/>
+<rect x="376" y="974" width="1156" height="150" rx="10" fill="#f4faf4" stroke="#a5d6a7" stroke-width="1.5"/>
+<text x="388" y="996" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">運用・セキュリティ（2-environments / 6-observability / ci）</text>
+<rect x="388" y="1002" width="170" height="112" rx="6" fill="#fff" stroke="#3949ab" stroke-width="1.4"/>
+<rect x="388" y="1002" width="5" height="112" rx="2" fill="#3949ab"/>
+<text x="400" y="1020" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">実行 SA ×7</text>
+<text x="400" y="1036.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">app-runtime / app-builder</text>
+<text x="400" y="1050.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">batch-job / mig-batch</text>
+<text x="400" y="1065.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">indexer / backup-ops</text>
+<text x="400" y="1079.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">ops-vm（用途別）</text>
+<rect x="531" y="1006" width="22" height="18" rx="9" fill="#3949ab"/>
+<text x="542" y="1019" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<rect x="570" y="1002" width="150" height="112" rx="6" fill="#fff" stroke="#3949ab" stroke-width="1.4"/>
+<rect x="570" y="1002" width="5" height="112" rx="2" fill="#3949ab"/>
+<text x="582" y="1020" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">予算アラート</text>
+<text x="582" y="1036.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">50/80/100%</text>
+<text x="582" y="1050.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">＋予測 100%</text>
+<text x="582" y="1065.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">stg/prod 必須</text>
+<text x="582" y="1079.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">自動停止しない</text>
+<rect x="693" y="1006" width="22" height="18" rx="9" fill="#3949ab"/>
+<text x="704" y="1019" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<rect x="732" y="1002" width="200" height="112" rx="6" fill="#fff" stroke="#43a047" stroke-width="1.4"/>
+<rect x="732" y="1002" width="5" height="112" rx="2" fill="#43a047"/>
+<text x="744" y="1020" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Monitoring</text>
+<text x="744" y="1036.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">サービス別 5xx・p95</text>
+<text x="744" y="1050.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">外形監視（/healthz）</text>
+<text x="744" y="1065.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Armor 拒否急増</text>
+<text x="744" y="1079.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">メール通知</text>
+<rect x="905" y="1006" width="22" height="18" rx="9" fill="#43a047"/>
+<text x="916" y="1019" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">6</text>
+<rect x="944" y="1002" width="190" height="112" rx="6" fill="#fff" stroke="#43a047" stroke-width="1.4"/>
+<rect x="944" y="1002" width="5" height="112" rx="2" fill="#43a047"/>
+<text x="956" y="1020" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">SCC Premium</text>
+<text x="956" y="1036.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">High/Critical 検出</text>
+<text x="956" y="1050.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">→ Pub/Sub 通知</text>
+<text x="956" y="1065.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">滞留（1h）監視</text>
+<text x="956" y="1079.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">有効化は組織側操作</text>
+<rect x="1107" y="1006" width="22" height="18" rx="9" fill="#43a047"/>
+<text x="1118" y="1019" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">6</text>
+<rect x="1146" y="1002" width="180" height="112" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="1146" y="1002" width="5" height="112" rx="2" fill="#e65100"/>
+<text x="1158" y="1020" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">バックアップ転送</text>
+<text x="1158" y="1036.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Storage Transfer（日次）</text>
+<text x="1158" y="1050.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Scheduler→Dataflow</text>
+<text x="1158" y="1065.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Spanner エクスポート</text>
+<text x="1158" y="1079.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">backup-ops SA</text>
+<rect x="1299" y="1006" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="1310" y="1019" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="1338" y="1002" width="182" height="112" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="1338" y="1002" width="5" height="112" rx="2" fill="#c2185b"/>
+<text x="1350" y="1020" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Artifact Registry</text>
+<text x="1350" y="1036.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">イメージ不変タグ</text>
+<text x="1350" y="1050.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">KMS 署名鍵・attestor</text>
+<text x="1350" y="1065.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">脆弱性スキャン</text>
+<text x="1350" y="1079.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">（ci/terraform）</text>
+<rect x="1490" y="1006" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="1504" y="1019" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="364,736 342,736" fill="none" stroke="#8e24aa" stroke-width="1.6" marker-end="url(#m8e24aa)"/>
+<text x="350" y="726" font-size="10" font-weight="normal" fill="#8e24aa" text-anchor="middle">ログ</text>
+<polyline points="330,280 362,280" fill="none" stroke="#5f6368" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#m5f6368)"/>
+<text x="346" y="270" font-size="9.5" font-weight="normal" fill="#5f6368" text-anchor="middle">Deploy</text>
+<rect x="1572" y="190" width="316" height="945" rx="10" fill="#fff8f2" stroke="#e65100" stroke-width="1.5"/>
+<text x="1584" y="212" font-size="13" font-weight="bold" fill="#bf360c" text-anchor="start">大阪リージョン asia-northeast2（fld-common）</text>
+<rect x="1584" y="222" width="292" height="300" rx="10" fill="#fff" stroke="#5f6368" stroke-width="1.5"/>
+<text x="1596" y="244" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">prj-common-backup（本番と別権限）</text>
+<rect x="1594" y="254" width="272" height="96" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="1594" y="254" width="5" height="96" rx="2" fill="#8e24aa"/>
+<text x="1606" y="272" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">GCS WORM バケット ×3 環境</text>
+<text x="1606" y="288.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">保持ポリシー（is_locked で改ざん不可）</text>
+<text x="1606" y="302.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">書込みは転送 SA のみ・削除権限なし</text>
+<text x="1606" y="317.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">documents/・spanner/ エクスポート</text>
+<rect x="1839" y="258" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="1850" y="271" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="1594" y="358" width="272" height="58" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="1594" y="358" width="5" height="58" rx="2" fill="#e65100"/>
+<text x="1606" y="376" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud SQL 自動バックアップ</text>
+<text x="1606" y="392.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">backup location = 大阪</text>
+<rect x="1839" y="362" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="1850" y="375" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<rect x="1594" y="424" width="272" height="86" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4" stroke-dasharray="5 4"/>
+<rect x="1594" y="424" width="5" height="86" rx="2" fill="#8e24aa"/>
+<text x="1606" y="442" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Backup and DR ボールト</text>
+<text x="1606" y="458.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">最小保持期間を強制</text>
+<text x="1606" y="472.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">【要検証】enable_backup_vault</text>
+<text x="1606" y="487.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">既定 false</text>
+<rect x="1839" y="428" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="1850" y="441" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="1584" y="534" width="292" height="186" rx="10" fill="#fff" stroke="#5f6368" stroke-width="1.5"/>
+<text x="1596" y="556" font-size="12" font-weight="bold" fill="#202124" text-anchor="start">prj-common-sorry</text>
+<rect x="1594" y="566" width="272" height="72" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="1594" y="566" width="5" height="72" rx="2" fill="#8e24aa"/>
+<text x="1606" y="584" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">GCS Sorry ページ</text>
+<text x="1606" y="600.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">東京リージョン外に配置（項番16）</text>
+<text x="1606" y="614.5" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">公開読取り（組織ポリシー例外）</text>
+<rect x="1839" y="570" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="1850" y="583" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="1594" y="646" width="272" height="62" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="1594" y="646" width="5" height="62" rx="2" fill="#8e24aa"/>
+<text x="1606" y="664" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">職員による緊急更新</text>
+<text x="1606" y="680.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">sorry_editors グループ（項番51）</text>
+<rect x="1839" y="650" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="1850" y="663" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<rect x="1584" y="744" width="292" height="380" rx="10" fill="#fff" stroke="#e65100" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="1596" y="766" font-size="12" font-weight="bold" fill="#bf360c" text-anchor="start">大規模災害時のみ：IaC で再構築（cold DR）</text>
+<text x="1600" y="792" font-size="11.5" font-weight="bold" fill="#bf360c" text-anchor="start">平時サーバなし（提案書 項番3・15）</text>
+<text x="1600" y="821" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">environments/prod-osaka-rebuild</text>
+<text x="1600" y="850" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">① 3-network（大阪）</text>
+<text x="1600" y="879" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">② 4-data（空 DB 作成）</text>
+<text x="1600" y="908" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">③ 大阪バックアップから復元</text>
+<text x="1600" y="937" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">④ Spanner：インポート or 再生成</text>
+<text x="1600" y="966" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">⑤ 5-app-infra（同一 digest）</text>
+<text x="1600" y="995" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">⑥ 6-observability</text>
+<text x="1600" y="1024" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">⑦ 更新データ再投入 → DNS 切替</text>
+<text x="1600" y="1053" font-size="11.5" font-weight="bold" fill="#bf360c" text-anchor="start">目標：14日以内（年1回訓練で実測）</text>
+<text x="1600" y="1082" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">warm（レプリカ常設）は提案外</text>
+<line x1="488" y1="952" x2="488" y2="968" stroke="#e65100" stroke-width="1.6" stroke-dasharray="5 4"/>
+<line x1="703" y1="952" x2="703" y2="968" stroke="#e65100" stroke-width="1.6" stroke-dasharray="5 4"/>
+<line x1="1252" y1="952" x2="1252" y2="968" stroke="#e65100" stroke-width="1.6" stroke-dasharray="5 4"/>
+<polyline points="488,968 1562,968 1562,300 1592,300" fill="none" stroke="#e65100" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#me65100)"/>
+<text x="860" y="964" font-size="10.5" fill="#bf360c" text-anchor="middle">日次バックアップ／複製 → 大阪 WORM</text>
+<polyline points="1300,328 1300,344 1556,344 1556,600 1592,600" fill="none" stroke="#1e88e5" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#m1e88e5)"/>
+<text x="1470" y="340" font-size="10.5" fill="#1e88e5" text-anchor="middle">maintenance_mode</text>
+<rect x="1918" y="560" width="262" height="90" rx="12" fill="#f8f9fa" stroke="#202124" stroke-width="1.5"/>
+<text x="2049" y="590" font-size="13" font-weight="bold" fill="#202124" text-anchor="middle">情報館様 職員</text>
+<text x="2049" y="610" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">Sorry 文言の緊急更新</text>
+<text x="2049" y="627" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">（項番51）</text>
+<polyline points="1918,676 1868,676" fill="none" stroke="#202124" stroke-width="1.6" marker-end="url(#m202124)"/>
+<rect x="1918" y="690" width="262" height="96" rx="12" fill="#f8f9fa" stroke="#202124" stroke-width="1.5"/>
+<text x="2049" y="720" font-size="13" font-weight="bold" fill="#202124" text-anchor="middle">特許庁 等 外部システム</text>
+<text x="2049" y="740" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">閉域接続（専用線）</text>
+<text x="2049" y="757" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">外部接続調整表で許可</text>
+<polyline points="1520,730 1916,730" fill="none" stroke="#00897b" stroke-width="1.6" marker-end="url(#m00897b)"/>
+<text x="1745" y="725" font-size="10.5" fill="#00897b" text-anchor="middle">Partner Interconnect</text>
+<rect x="1918" y="190" width="262" height="170" rx="12" fill="#f8f9fa" stroke="#202124" stroke-width="1.5"/>
+<text x="2049" y="218" font-size="13" font-weight="bold" fill="#202124" text-anchor="middle">基盤チーム／開発者</text>
+<text x="2049" y="242" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">PR → Preview → 承認 → Deploy</text>
+<text x="2049" y="262" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">prod は承認付き CI のみ</text>
+<text x="2049" y="282" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">ローカル prod apply は拒否</text>
+<text x="2049" y="302" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="middle">（scripts/im.sh）</text>
+<rect x="20" y="1160" width="1300" height="345" rx="10" fill="#fdf4f8" stroke="#c2185b" stroke-width="2"/>
+<text x="32" y="1182" font-size="15" font-weight="bold" fill="#ad1457" text-anchor="start">デリバリー（ci/ ・ scripts/）</text>
+<text x="36" y="1206" font-size="13" font-weight="bold" fill="#ad1457" text-anchor="start">IaC</text>
+<rect x="36" y="1216" width="190" height="54" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="36" y="1216" width="5" height="54" rx="2" fill="#c2185b"/>
+<text x="48" y="1234" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Git（PR）</text>
+<text x="48" y="1250.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">変更ID 付与</text>
+<rect x="196" y="1220" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="210" y="1233" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<rect x="248" y="1216" width="190" height="54" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="248" y="1216" width="5" height="54" rx="2" fill="#c2185b"/>
+<text x="260" y="1234" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Build</text>
+<text x="260" y="1250.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">iac-preview.yaml</text>
+<rect x="408" y="1220" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="422" y="1233" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="226,1243 246,1243" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="460" y="1216" width="190" height="54" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="460" y="1216" width="5" height="54" rx="2" fill="#5f6368"/>
+<text x="472" y="1234" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Preview</text>
+<text x="472" y="1250.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">差分・証跡 GCS</text>
+<rect x="623" y="1220" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="634" y="1233" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<polyline points="438,1243 458,1243" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="672" y="1216" width="190" height="54" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="672" y="1216" width="5" height="54" rx="2" fill="#c2185b"/>
+<text x="684" y="1234" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">承認</text>
+<text x="684" y="1250.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">prod は必須</text>
+<rect x="832" y="1220" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="846" y="1233" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="650,1243 670,1243" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="884" y="1216" width="190" height="54" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="884" y="1216" width="5" height="54" rx="2" fill="#c2185b"/>
+<text x="896" y="1234" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Build</text>
+<text x="896" y="1250.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">iac-apply.yaml</text>
+<rect x="1044" y="1220" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="1058" y="1233" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="862,1243 882,1243" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="1096" y="1216" width="190" height="54" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="1096" y="1216" width="5" height="54" rx="2" fill="#5f6368"/>
+<text x="1108" y="1234" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Infrastructure Manager</text>
+<text x="1108" y="1250.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Deploy（環境別 SA）</text>
+<rect x="1259" y="1220" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="1270" y="1233" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<polyline points="1074,1243 1094,1243" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<text x="36" y="1296" font-size="12" font-weight="bold" fill="#3c4043" text-anchor="start">適用順（Stage ＝ 番号・環境 ＝ environments/{dev,stg,prod}）</text>
+<rect x="36" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#5f6368" stroke-width="1.4"/>
+<rect x="36" y="1308" width="5" height="52" rx="2" fill="#5f6368"/>
+<text x="48" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">0-bootstrap</text>
+<text x="48" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">手動1回</text>
+<rect x="177" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#8e24aa" stroke-width="1.4"/>
+<rect x="177" y="1308" width="5" height="52" rx="2" fill="#8e24aa"/>
+<text x="189" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">1-org</text>
+<text x="189" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">2巡適用</text>
+<polyline points="165,1334 175,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="318" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#3949ab" stroke-width="1.4"/>
+<rect x="318" y="1308" width="5" height="52" rx="2" fill="#3949ab"/>
+<text x="330" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">2-environments</text>
+<text x="330" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">env 毎</text>
+<polyline points="306,1334 316,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="459" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#00897b" stroke-width="1.4"/>
+<rect x="459" y="1308" width="5" height="52" rx="2" fill="#00897b"/>
+<text x="471" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">3-network</text>
+<text x="471" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">env 毎</text>
+<polyline points="447,1334 457,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="600" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#e65100" stroke-width="1.4"/>
+<rect x="600" y="1308" width="5" height="52" rx="2" fill="#e65100"/>
+<text x="612" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">4-data</text>
+<text x="612" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">env 毎</text>
+<polyline points="588,1334 598,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="741" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="741" y="1308" width="5" height="52" rx="2" fill="#c2185b"/>
+<text x="753" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">ci</text>
+<text x="753" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Registry・BinAuthz</text>
+<polyline points="729,1334 739,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="882" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#6d4c41" stroke-width="1.4"/>
+<rect x="882" y="1308" width="5" height="52" rx="2" fill="#6d4c41"/>
+<text x="894" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">初回ビルド</text>
+<text x="894" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">app_build.sh</text>
+<polyline points="870,1334 880,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="1023" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1023" y="1308" width="5" height="52" rx="2" fill="#1e88e5"/>
+<text x="1035" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">5-app-infra</text>
+<text x="1035" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">env 毎</text>
+<polyline points="1011,1334 1021,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<rect x="1164" y="1308" width="128" height="52" rx="6" fill="#fff" stroke="#43a047" stroke-width="1.4"/>
+<rect x="1164" y="1308" width="5" height="52" rx="2" fill="#43a047"/>
+<text x="1176" y="1326" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">6-observability</text>
+<text x="1176" y="1342.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">env 毎</text>
+<polyline points="1152,1334 1162,1334" fill="none" stroke="#5f6368" stroke-width="1.6" marker-end="url(#m5f6368)"/>
+<text x="36" y="1390" font-size="13" font-weight="bold" fill="#ad1457" text-anchor="start">アプリ（app/ Spring Boot）</text>
+<rect x="36" y="1400" width="190" height="52" rx="6" fill="#fff" stroke="#6d4c41" stroke-width="1.4"/>
+<rect x="36" y="1400" width="5" height="52" rx="2" fill="#6d4c41"/>
+<text x="48" y="1418" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">app/ ソース</text>
+<text x="48" y="1434.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">Java 21・Spring Boot</text>
+<rect x="196" y="1404" width="28" height="18" rx="9" fill="#6d4c41"/>
+<text x="210" y="1417" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">app</text>
+<rect x="248" y="1400" width="190" height="52" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="248" y="1400" width="5" height="52" rx="2" fill="#c2185b"/>
+<text x="260" y="1418" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">ビルド＋単体テスト</text>
+<text x="260" y="1434.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">app-deploy.yaml</text>
+<rect x="408" y="1404" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="422" y="1417" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="226,1426 246,1426" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="460" y="1400" width="190" height="52" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="460" y="1400" width="5" height="52" rx="2" fill="#c2185b"/>
+<text x="472" y="1418" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Artifact Registry</text>
+<text x="472" y="1434.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">digest 取得</text>
+<rect x="620" y="1404" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="634" y="1417" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="438,1426 458,1426" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="672" y="1400" width="190" height="52" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="672" y="1400" width="5" height="52" rx="2" fill="#c2185b"/>
+<text x="684" y="1418" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">脆弱性ゲート</text>
+<text x="684" y="1434.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">CRITICAL＝0</text>
+<rect x="832" y="1404" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="846" y="1417" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="650,1426 670,1426" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="884" y="1400" width="190" height="52" rx="6" fill="#fff" stroke="#c2185b" stroke-width="1.4"/>
+<rect x="884" y="1400" width="5" height="52" rx="2" fill="#c2185b"/>
+<text x="896" y="1418" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">署名</text>
+<text x="896" y="1434.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">KMS・attestor</text>
+<rect x="1044" y="1404" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="1058" y="1417" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<polyline points="862,1426 882,1426" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<rect x="1096" y="1400" width="190" height="52" rx="6" fill="#fff" stroke="#1e88e5" stroke-width="1.4"/>
+<rect x="1096" y="1400" width="5" height="52" rx="2" fill="#1e88e5"/>
+<text x="1108" y="1418" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">Cloud Run 更新</text>
+<text x="1108" y="1434.0" font-size="10.5" font-weight="normal" fill="#5f6368" text-anchor="start">サービス＋Jobs</text>
+<rect x="1259" y="1404" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1270" y="1417" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<polyline points="1074,1426 1094,1426" fill="none" stroke="#c2185b" stroke-width="1.6" marker-end="url(#mc2185b)"/>
+<text x="36" y="1482" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">昇格：stg で試験済みの同一 digest を prod Registry へコピー（digest 一致を検証）→ prod の鍵で署名 → 配備（app-promote.yaml・再ビルドしない）</text>
+<rect x="1336" y="1160" width="844" height="345" rx="10" fill="#fff" stroke="#9aa0a6" stroke-width="1.5"/>
+<text x="1348" y="1182" font-size="15" font-weight="bold" fill="#202124" text-anchor="start">凡例・環境差分</text>
+<rect x="1355" y="1191" width="22" height="18" rx="9" fill="#5f6368"/>
+<text x="1366" y="1204" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">0</text>
+<text x="1390" y="1204" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">0-bootstrap：管理 Project・State・実行 SA</text>
+<rect x="1355" y="1217" width="22" height="18" rx="9" fill="#8e24aa"/>
+<text x="1366" y="1230" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<text x="1390" y="1230" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">1-org：組織ポリシー・フォルダ・共通 Project</text>
+<rect x="1355" y="1243" width="22" height="18" rx="9" fill="#3949ab"/>
+<text x="1366" y="1256" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<text x="1390" y="1256" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">2-environments：環境 Project・API・SA・予算</text>
+<rect x="1355" y="1269" width="22" height="18" rx="9" fill="#00897b"/>
+<text x="1366" y="1282" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+<text x="1390" y="1282" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">3-network：VPC・サブネット・FW・閉域接続</text>
+<rect x="1355" y="1295" width="22" height="18" rx="9" fill="#e65100"/>
+<text x="1366" y="1308" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<text x="1390" y="1308" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">4-data：DB・キャッシュ・ファイル・バックアップ</text>
+<rect x="1355" y="1321" width="22" height="18" rx="9" fill="#1e88e5"/>
+<text x="1366" y="1334" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<text x="1390" y="1334" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">5-app-infra：Cloud Run・LB・Armor・CDN</text>
+<rect x="1355" y="1347" width="22" height="18" rx="9" fill="#43a047"/>
+<text x="1366" y="1360" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">6</text>
+<text x="1390" y="1360" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">6-observability：監視・SCC 通知・運用 VM</text>
+<rect x="1352" y="1373" width="28" height="18" rx="9" fill="#c2185b"/>
+<text x="1366" y="1386" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">ci</text>
+<text x="1390" y="1386" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">ci：Registry・Binary Authorization・パイプライン</text>
+<rect x="1352" y="1399" width="28" height="18" rx="9" fill="#6d4c41"/>
+<text x="1366" y="1412" font-size="10.5" font-weight="bold" fill="#fff" text-anchor="middle">app</text>
+<text x="1390" y="1412" font-size="11.5" font-weight="normal" fill="#3c4043" text-anchor="start">app：Spring Boot アプリ本体</text>
+<text x="1760" y="1196" font-size="12.5" font-weight="bold" fill="#202124" text-anchor="start">環境差分（tfvars）</text>
+<text x="1760" y="1222" font-size="11" font-weight="bold" fill="#202124" text-anchor="start">項目</text>
+<text x="1890" y="1222" font-size="11" font-weight="bold" fill="#202124" text-anchor="start">dev</text>
+<text x="1960" y="1222" font-size="11" font-weight="bold" fill="#202124" text-anchor="start">stg</text>
+<text x="2035" y="1222" font-size="11" font-weight="bold" fill="#202124" text-anchor="start">prod</text>
+<text x="1760" y="1246" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">Cloud SQL HA</text>
+<text x="1890" y="1246" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">×</text>
+<text x="1960" y="1246" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">○</text>
+<text x="2035" y="1246" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">○</text>
+<text x="1760" y="1270" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">Cloud Run min</text>
+<text x="1890" y="1270" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">0</text>
+<text x="1960" y="1270" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">1</text>
+<text x="2035" y="1270" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">2</text>
+<text x="1760" y="1294" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">WAF</text>
+<text x="1890" y="1294" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">preview</text>
+<text x="1960" y="1294" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">preview</text>
+<text x="2035" y="1294" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">強制</text>
+<text x="1760" y="1318" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">Interconnect</text>
+<text x="1890" y="1318" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">×</text>
+<text x="1960" y="1318" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">○</text>
+<text x="2035" y="1318" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">○</text>
+<text x="1760" y="1342" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">BinAuthz</text>
+<text x="1890" y="1342" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">監査</text>
+<text x="1960" y="1342" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">強制</text>
+<text x="2035" y="1342" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">強制</text>
+<text x="1760" y="1366" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">公開範囲</text>
+<text x="1890" y="1366" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">IP 制限</text>
+<text x="1960" y="1366" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">IP 制限</text>
+<text x="2035" y="1366" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">公開</text>
+<text x="1760" y="1390" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">運用 VM</text>
+<text x="1890" y="1390" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">×</text>
+<text x="1960" y="1390" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">○</text>
+<text x="2035" y="1390" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">○</text>
+<text x="1760" y="1414" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">予算</text>
+<text x="1890" y="1414" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">任意</text>
+<text x="1960" y="1414" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">必須</text>
+<text x="2035" y="1414" font-size="11" font-weight="normal" fill="#3c4043" text-anchor="start">必須</text>
+<line x1="1760" y1="1228" x2="2160" y2="1228" stroke="#dadce0"/>
+<text x="1760" y="1450" font-size="11" font-weight="normal" fill="#5f6368" text-anchor="start">点線枠＝任意・要検証・被災時のみ</text>
+<text x="1760" y="1470" font-size="11" font-weight="normal" fill="#5f6368" text-anchor="start">実線矢印＝通信／点線矢印＝バックアップ・切替</text>
+<text x="1760" y="1490" font-size="11" font-weight="normal" fill="#5f6368" text-anchor="start">CIDR はサンプル値（prod）</text>
+<rect x="386" y="584" width="790" height="19" fill="#f0faf8"/>
+<text x="388" y="598" font-size="12" font-weight="bold" fill="#202124">VPC jpp-prod-vpc（3-network）　FW ポリシー：外向き既定拒否＋外部接続調整表の許可のみ／VPC フローログ</text>
+</svg>

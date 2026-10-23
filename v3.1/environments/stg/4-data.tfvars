@@ -1,0 +1,19 @@
+project_id  = "REPLACE_STG_PROJECT"
+environment = "stg"
+network     = "projects/REPLACE_STG_PROJECT/global/networks/jpp-stg-vpc"
+service_accounts = {                          # 2-environments output
+  app-runtime = "app-runtime@REPLACE_STG_PROJECT.iam.gserviceaccount.com"
+  batch-job   = "batch-job@REPLACE_STG_PROJECT.iam.gserviceaccount.com"
+  mig-batch   = "mig-batch@REPLACE_STG_PROJECT.iam.gserviceaccount.com"
+  indexer     = "indexer@REPLACE_STG_PROJECT.iam.gserviceaccount.com"
+  backup-ops  = "backup-ops@REPLACE_STG_PROJECT.iam.gserviceaccount.com"
+}
+sql_ha                   = true
+spanner_enabled          = true
+spanner_processing_units = 1000
+redis_memory_gb          = 5
+filestore_tier           = "REGIONAL"
+filestore_capacity_gb    = 1024
+dr_mode                  = "cold"
+backup_bucket            = "REPLACE_COMMON_BACKUP_PROJECT-stg"   # 1-org output backup_buckets["stg"]
+deletion_protection      = true
